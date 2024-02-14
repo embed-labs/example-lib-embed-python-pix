@@ -305,8 +305,8 @@ class PixApp:
         load_dotenv()
 
         PRODUTO = "pix"     # produto de pagamento (atual pix)
-        SUB_PRODUTO = "1"   # fornecedor/banco/parceiro (atual 1)
         TIMEOUT = "250"     # timeout para consulta de status (para gerar qrcode ou reembolso)
+        SUB_PRODUTO = os.getenv('SUB_PRODUTO')   # fornecedor/banco/parceiro (atual 1)
         API_KEY = os.getenv('API_KEY')
         PROD_ID = os.getenv('PROD_ID')
         PID = os.getenv('PID')
