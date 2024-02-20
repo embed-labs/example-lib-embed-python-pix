@@ -39,12 +39,14 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 LARGE_FONT_STYLE = ("Roboto", 12, "bold")  # brandon, musc, montserrat, coco goose
 SMALL_FONT_STYLE = ("Roboto", 11, "bold")
 BUTTON_FONT_STYLE = ("Roboto", 9)
-COLOR_BG_FRAME = "#282a36"  # Dark purple
-COLOR_BG_LABEL = "#282a36"  # Dark purple
-COLOR_FG_LABEL = "#f8f8f2"  # White
-COLOR_BG_ENTRY = "#44475a"  # Dark gray
-COLOR_BG_BUTTON = "#6272a4"  # Light purple
-COLOR_FG_BUTTON = "#f8f8f2"  # White
+COLOR_BG_FRAME = "#000000"  # Dark purple
+COLOR_BG_LABEL = "#000000"  # Dark purple
+COLOR_FG_LABEL = "#80ff80"  # White
+COLOR_BG_ENTRY = "#000000"  # Dark gray
+COLOR_BG_BUTTON = "#80ff80"  # Light purple
+COLOR_FG_BUTTON = "#000000"  # White
+COLOR_BG_BUTTON_DISABLED = "#666666"
+COLOR_FG_BUTTON_DISABLED = "#80ff80"
 
 # =========================================
 # | =========  PÁGINA PRINCIPAL ========= |
@@ -156,6 +158,7 @@ class PixApp:
             relief=RAISED,
             bg=COLOR_BG_BUTTON,
             fg=COLOR_FG_BUTTON,
+            disabledforeground=COLOR_FG_BUTTON_DISABLED,
             font=SMALL_FONT_STYLE,
             borderwidth=1,
             width=17,
@@ -169,6 +172,7 @@ class PixApp:
             relief=RAISED,
             bg=COLOR_BG_BUTTON,
             fg=COLOR_FG_BUTTON,
+            disabledforeground=COLOR_FG_BUTTON_DISABLED,
             font=SMALL_FONT_STYLE,
             borderwidth=1,
             width=17,
@@ -182,6 +186,7 @@ class PixApp:
             relief=RAISED,
             bg=COLOR_BG_BUTTON,
             fg=COLOR_FG_BUTTON,
+            disabledforeground=COLOR_FG_BUTTON_DISABLED,
             font=SMALL_FONT_STYLE,
             borderwidth=1,
             width=17,
@@ -195,6 +200,7 @@ class PixApp:
             relief=RAISED,
             bg=COLOR_BG_BUTTON,
             fg=COLOR_FG_BUTTON,
+            disabledforeground=COLOR_FG_BUTTON_DISABLED,
             font=SMALL_FONT_STYLE,
             borderwidth=1,
             width=17,
