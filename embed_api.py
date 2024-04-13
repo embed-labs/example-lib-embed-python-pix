@@ -34,7 +34,7 @@ def iniciar():
     result = lib.obter_valor(output, STATUS_CODE)
     return result
 
-def pix(valor):
+def qrcode(valor):
     OPERACAO = 'get_qrcode'     # operação para realizar pagamento pix
     VALOR = valor               # valor do pagamento em centavos
 

@@ -11,7 +11,6 @@ class Main(tk.Tk):
         super().__init__()
 
         api.configurar()    # Configuração da API
-        api.iniciar()       # Inicialização do produto PIX
 
         # Variáveis de cores
         self.cor_fundo = "black"
@@ -87,10 +86,12 @@ class TelaPrincipal(tk.Frame):
         super().__init__(parent, bg=parent.master.cor_fundo)
         self.parent = parent
         
+        api.iniciar()   # Inicialização do produto PIX
+
         self.label = tk.Label(self, text="Operações com Pix\n", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 32))
         self.label.pack()
 
-        self.refund_button = tk.Button(self, text="Gerar QRCode", command=lambda: self.parent.master.mostrar_frame("TelaQrcode"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
+        self.refund_button = tk.Button(self, text="Gerar QR Code", command=lambda: self.parent.master.mostrar_frame("TelaQrcode"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
         self.refund_button.pack(pady=10)
 
         self.refund_button = tk.Button(self, text="Gerar Reembolso", command=lambda: self.parent.master.mostrar_frame("TelaReembolso"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
@@ -120,7 +121,7 @@ class TelaQrcode(tk.Frame):
         valor = self.textbox.get()
         print("Valor do Pix:", valor)
 
-        result = api.pix(valor)
+        result = api.qrcode(valor)
         if result == "0":
             self.parent.master.mostrar_frame("TelaProcessamento")
 
@@ -194,8 +195,10 @@ class TelaProcessamento(tk.Frame):
 
                 api.finalizar()
                 time.sleep(3)
-                self.voltar()
                 break
+                
+        self.parent.master.mostrar_frame("TelaPrincipal")
+
 
     def cancelar(self):
         api.finalizar()
