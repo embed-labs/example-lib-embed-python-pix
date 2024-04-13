@@ -187,13 +187,12 @@ class TelaProcessamento(tk.Frame):
         while True:
             result = api.status()
             if result == "0":
-                api.finalizar()
-
                 self.label.pack_forget()
                 self.spinner.pack_forget()
                 self.button_frame.pack_forget()
                 self.status_label.config(text="Pagamento confirmado!", font=('Helvetica', 26))
 
+                api.finalizar()
                 time.sleep(3)
                 self.voltar()
                 break

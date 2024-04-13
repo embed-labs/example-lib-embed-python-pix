@@ -3,6 +3,7 @@ import os
 import dotenv
 import embed_lib as lib
 
+CODE = "codigo"
 STATUS_CODE = "resultado.status_code"
 QRCODE_BASE64 = "resultado.qrcode_base64"
 
@@ -70,5 +71,5 @@ def finalizar():
     output = lib.finalizar(OPERACAO)
     print(f"finalizar = {output}")
 
-    result = lib.obter_valor(output, STATUS_CODE)
+    result = lib.obter_valor(output, CODE)
     return result

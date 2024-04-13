@@ -99,7 +99,7 @@ Pode ser parametrizado de duas maneiras:
             "api_key": "",              // gerado pelo time de integração
             "prod_id": "",              // gerado pelo time de integração
             "pid": "",                  // gerado pelo time de integração
-            "conta": "",                // gerado pelo time de integração
+            "conta": "",                // gerado pelo time de integração (temporário para piloto)
             "nome": "",                 // informado pelo cliente
             "email": "",                // informado pelo cliente
             "telefone": "",             // informado pelo cliente
