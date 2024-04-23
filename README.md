@@ -89,7 +89,7 @@ Aqui estão as definições para _input_ e _output_ para este método
 Pode ser parametrizado de duas maneiras:
 
 1. JSON
-```json
+```javascript
 {
     "configs": {
         "produto": "pos",                                        
@@ -154,6 +154,10 @@ Pode ser parametrizado de duas maneiras:
 ```c
 "pix"
 ```
+###### 2.2.1.1 Metaparâmetro (obedecendo a sequência)
+```c
+"{operacao};{valor};{tid}"
+```
 
 ###### 2.2.2. Output
 
@@ -183,31 +187,48 @@ Aqui estão as definições para _input_ e _output_ para este método.
 ###### 3.2.1. Input
 
 Temos cinco modalidades de processamento que podem ser realizadas:
-1. get_qrcode
-5. get_status (transação atual)
+1. get_base64
+2. get_chave_pix
+3. get_status (transação atual)
+4. get_reembolso
 
 Estas modalidades podem ser parametrizadas de duas formas:
 
 1. JSON
-```json
+```javascript
 // Get Qrcode (base64)
 {
     "processar": {
-        "operacao": "get_qrcode",       // obtém o qrcode base64 
+        "operacao": "get_base64",       // obtém o qrcode base64 
         "valor": "",                    // em centavos (se R$ 1,00 logo 100)
+    }
+}
+// Get Chave Pix (chave_pix)
+{
+    "processar": {
+        "operacao": "get_chave_pix",        // obtém a chave pix
+        "valor": "",                        // em centavos (se R$ 1,00 logo 100)
     }
 }
 // Get Status
 {
     "processar": {
-        "operacao": "get_status"
+        "operacao": "get_status",
+        "tid": "",                  // opcional, para pegar o status de uma transação específica
+    }
+}
+// Get Reembolso
+{
+    "processar": {
+        "operacao": "get_reembolso",
+        "tid": "",                  // opcional, para fazer o reembolso de uma transação específica
     }
 }
 ```
 2. Metaparâmetro (obedecendo a sequência)
 ```c
 // Get Qrcode (base64)
-"get_qrcode;valor"
+"get_base64;valor"
 // Get Status
 "get_status"
 ```
@@ -215,22 +236,36 @@ Estas modalidades podem ser parametrizadas de duas formas:
 
 O retorno para este método consiste em um JSON (sempre), no seguinte formato:
 
-```json
+```javascript
 // Get Qrcode (base64)
 {
     "codigo": 0,
     "mensagem": "Sucesso",
     "resultado": {
-        "qrcode_base64": "",
+        "status_code": "1",
+        "status_message": "1",
+        "base64": "",
+        "tid": "",   
     }
 }
-// Get Status
+// Get Chave Pix (chave_pix)
+{
+    "codigo": 0,
+    "mensagem": "Sucesso",
+    "resultado": {
+        "status_code": "1",
+        "status_message": "1",
+        "chave_pix": "",
+        "tid": "",   
+    }
+}
+// Get Status | Get Reembolso
 {
     "codigo": 0,
     "mensagem": "Sucesso",
     "resultado": {
         "status_code": 1,
-        "status_message": "iniciado"
+        "status_message": "processando"
     }
 }
 ```
