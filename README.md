@@ -9,8 +9,9 @@ Exemplo demonstrativo para o uso da `lib-embed` no transações com PIX.
 É necessário o Python 3 instalado em sua máquina.
 
 Verifique a necessidade de instalar as dependências:
-- PIP
-- PILLOW
+1. python-dotenv
+2. python3-tk
+3. pillow
 
 ### Clonar
 
@@ -62,7 +63,33 @@ graph TD;
 1. Obter Base64
 ```mermaid
 flowchart TD;
-    base1(embed_iniciar\ninput = pix) -- result.status_code ==  0 --> base2(embed_processar\ninput = get_qrcode;10000);
+    base1(embed_iniciar\ninput = pix) -- result.status_code ==  0 --> base2(embed_processar\ninput = get_base64;10000);
+    base2 -- result.status_code ==  1 --> base3(embed_processar\ninput = get_status);
+    base3 -- result.status_code ==  1 --> base3;
+    base3 -- result.status_code ==  0 --> base4(embed_finalizar\ninput = N/A);
+```
+
+2. Obter Chave Pix
+```mermaid
+flowchart TD;
+    base1(embed_iniciar\ninput = pix) -- result.status_code ==  0 --> base2(embed_processar\ninput = get_chave_pix;10000);
+    base2 -- result.status_code ==  1 --> base3(embed_processar\ninput = get_status);
+    base3 -- result.status_code ==  1 --> base3;
+    base3 -- result.status_code ==  0 --> base4(embed_finalizar\ninput = N/A);
+```
+
+3. Obter Reembolso
+```mermaid
+flowchart TD;
+    base1(embed_iniciar\ninput = pix) -- result.status_code ==  0 --> base2(embed_processar\ninput = get_reembolso;tid);
+    base2 -- result.status_code == 0 --> base3(embed_finalizar\ninput = N\A);
+```
+_Obs: ao informar o TID será reembolsada uma transação especifica; se não será a ultima realizada_
+
+4. Obter Status (transação especifica)
+```mermaid
+flowchart TD;
+    base1(embed_iniciar\ninput = pix) -- result.status_code ==  0 --> base2(embed_processar\ninput = get_status;tid);
     base2 -- result.status_code ==  1 --> base3(embed_processar\ninput = get_status);
     base3 -- result.status_code ==  1 --> base3;
     base3 -- result.status_code ==  0 --> base4(embed_finalizar\ninput = N/A);
@@ -154,10 +181,6 @@ Pode ser parametrizado de duas maneiras:
 ```c
 "pix"
 ```
-###### 2.2.1.1 Metaparâmetro (obedecendo a sequência)
-```c
-"{operacao};{valor};{tid}"
-```
 
 ###### 2.2.2. Output
 
@@ -189,13 +212,13 @@ Aqui estão as definições para _input_ e _output_ para este método.
 Temos cinco modalidades de processamento que podem ser realizadas:
 1. get_base64
 2. get_chave_pix
-3. get_status (transação atual)
+3. get_status
 4. get_reembolso
 
 Estas modalidades podem ser parametrizadas de duas formas:
 
 1. JSON
-```javascript
+```json
 // Get Qrcode (base64)
 {
     "processar": {
@@ -229,43 +252,56 @@ Estas modalidades podem ser parametrizadas de duas formas:
 ```c
 // Get Qrcode (base64)
 "get_base64;valor"
+// Get Chave Pix 
+"get_chave_pix;valor"
 // Get Status
-"get_status"
+"get_status;tid" // tid opcional, para o status de uma transação específica
+// Get Reembolso
+"get_reembolso;tid" // tid opcional, para fazer o reembolso de uma transação específica
 ```
 ###### 3.2.2. Output
 
 O retorno para este método consiste em um JSON (sempre), no seguinte formato:
 
-```javascript
-// Get Qrcode (base64)
+```json
+// Get Base64
 {
     "codigo": 0,
     "mensagem": "Sucesso",
     "resultado": {
         "status_code": "1",
-        "status_message": "1",
+        "status_message": "processando",
         "base64": "",
         "tid": "",   
     }
 }
-// Get Chave Pix (chave_pix)
+// Get Chave Pix
 {
     "codigo": 0,
     "mensagem": "Sucesso",
     "resultado": {
         "status_code": "1",
-        "status_message": "1",
+        "status_message": "processando",
         "chave_pix": "",
         "tid": "",   
     }
 }
-// Get Status | Get Reembolso
+// Get Status 
 {
     "codigo": 0,
     "mensagem": "Sucesso",
     "resultado": {
         "status_code": 1,
         "status_message": "processando"
+    }
+}
+// Get Reembolso
+{
+    "codigo": 0,
+    "mensagem": "Sucesso",
+    "resultado": {
+        "status_code": 0,
+        "status_message": "concluido"
     }
 }
 ```
@@ -308,11 +344,7 @@ O retorno para este método consiste em um JSON (sempre), no seguinte formato:
 ```json
 {
     "codigo": 0,
-    "mensagem": "Sucesso",
-    "resultado": {
-        "status_code": 1,
-        "status_message": "iniciado"
-    }
+    "mensagem": "Sucesso"
 }
 ```
 
