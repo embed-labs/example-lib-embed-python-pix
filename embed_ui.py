@@ -1,5 +1,6 @@
 import embed_api as api
 
+import os
 import time
 import tkinter as tk
 from tkinter import ttk
@@ -33,9 +34,11 @@ class Main(tk.Tk):
 
         self.frames = {
             "TelaQrcode": TelaQrcode, 
+            "TelaChavePix": TelaChavePix, 
             "TelaReembolso": TelaReembolso, 
             "TelaPrincipal": TelaPrincipal, 
             "TelaProcessamento": TelaProcessamento,
+            "TelaStatusEspecifico": TelaStatusEspecifico, 
         }
         self.mostrar_frame("TelaPrincipal")
 
@@ -91,11 +94,17 @@ class TelaPrincipal(tk.Frame):
         self.label = tk.Label(self, text="Operações com Pix\n", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 32))
         self.label.pack()
 
-        self.refund_button = tk.Button(self, text="Gerar QR Code", command=lambda: self.parent.master.mostrar_frame("TelaQrcode"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
+        self.refund_button = tk.Button(self, text="Gerar Base64 (QR Code)", command=lambda: self.parent.master.mostrar_frame("TelaQrcode"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
+        self.refund_button.pack(pady=10)
+
+        self.refund_button = tk.Button(self, text="Gerar Chave Pix", command=lambda: self.parent.master.mostrar_frame("TelaChavePix"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
         self.refund_button.pack(pady=10)
 
         self.refund_button = tk.Button(self, text="Gerar Reembolso", command=lambda: self.parent.master.mostrar_frame("TelaReembolso"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
         self.refund_button.pack(pady=10)
+
+        self.refund_button = tk.Button(self, text="Obter Status Especifico", command=lambda: self.parent.master.mostrar_frame("TelaStatusEspecifico"), height=5, width=20, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 12, 'bold'))
+        self.refund_button.pack(pady=10) 
 
 class TelaQrcode(tk.Frame):
     def __init__(self, parent):
@@ -105,7 +114,7 @@ class TelaQrcode(tk.Frame):
         self.label = tk.Label(self, text="Valor do Pix:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
         self.label.pack()
 
-        self.textbox = tk.Entry(self, font=('Helvetica', 18))
+        self.textbox = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
         self.textbox.pack(pady=10)
 
         self.button_frame = tk.Frame(self, bg=self.parent.master.cor_fundo)
@@ -121,20 +130,23 @@ class TelaQrcode(tk.Frame):
         valor = self.textbox.get()
         print("Valor do Pix:", valor)
 
-        result = api.qrcode(valor)
-        if result == "0":
+        result = api.base_64(valor)
+        if result == "1":
             self.parent.master.mostrar_frame("TelaProcessamento")
 
     def voltar(self):
         self.parent.master.mostrar_frame("TelaPrincipal")
 
-class TelaReembolso(tk.Frame):
+class TelaChavePix(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent, bg=parent.master.cor_fundo)
         self.parent = parent
 
-        self.label = tk.Label(self, text="Realizar Reembolso Pix", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
+        self.label = tk.Label(self, text="Valor do Pix:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
         self.label.pack()
+
+        self.textbox = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.textbox.pack(pady=10)
 
         self.button_frame = tk.Frame(self, bg=self.parent.master.cor_fundo)
         self.button_frame.pack(padx=30)
@@ -146,8 +158,78 @@ class TelaReembolso(tk.Frame):
         self.voltar_button.pack(pady=10)
 
     def processar(self):
-        result = api.reembolso()
+        valor = self.textbox.get()
+        print("Valor do Pix:", valor)
+
+        result = api.chave_pix(valor)
+        if result == "1":
+            self.parent.master.mostrar_frame("TelaProcessamento")
+
+    def voltar(self):
+        self.parent.master.mostrar_frame("TelaPrincipal")
+
+class TelaReembolso(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, bg=parent.master.cor_fundo)
+        self.parent = parent
+
+        self.label = tk.Label(self, text="Digite o TID:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
+        self.label.pack()
+
+        self.tid_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.tid_text.pack(pady=10)
+
+        self.button_frame = tk.Frame(self, bg=self.parent.master.cor_fundo)
+        self.button_frame.pack(padx=30)
+
+        self.ok_button = tk.Button(self.button_frame, text="OK", command=self.processar, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.ok_button.pack(side="left", padx=10)
+
+        self.voltar_button = tk.Button(self.button_frame, text="Voltar", command=self.voltar, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.voltar_button.pack(pady=10)
+
+    def processar(self):
+        tid = self.tid_text.get("1.0", tk.END)
+        print("Tid:", tid)
+
+        result = api.reembolso(tid)
         if result == "0":
+            self.label.config(text="Reembolso confirmado!", font=('Helvetica', 26))
+        else:
+            self.label.config(text="Erro ao realizar!", font=('Helvetica', 26))
+        
+        time.sleep(3)  
+        self.parent.master.mostrar_frame("TelaPrincipal")
+
+    def voltar(self):
+        self.parent.master.mostrar_frame("TelaPrincipal")
+
+class TelaStatusEspecifico(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent, bg=parent.master.cor_fundo)
+        self.parent = parent
+
+        self.label = tk.Label(self, text="Digite o TID:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
+        self.label.pack()
+
+        self.tid_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.tid_text.pack(pady=10)
+
+        self.button_frame = tk.Frame(self, bg=self.parent.master.cor_fundo)
+        self.button_frame.pack(padx=30)
+
+        self.ok_button = tk.Button(self.button_frame, text="OK", command=self.processar, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.ok_button.pack(side="left", padx=10)
+
+        self.voltar_button = tk.Button(self.button_frame, text="Voltar", command=self.voltar, bg=self.parent.master.cor_botao, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.voltar_button.pack(pady=10)
+
+    def processar(self):
+        tid = self.tid_text.get("1.0", tk.END)
+        print("Tid:", tid)
+
+        result = api.status(tid)
+        if result == "1":
             self.parent.master.mostrar_frame("TelaProcessamento")
 
     def voltar(self):
@@ -158,18 +240,28 @@ class TelaProcessamento(tk.Frame):
         super().__init__(parent, bg=parent.master.cor_fundo)
         self.parent = parent
 
-        self.label = tk.Label(self, text="Realize o pagamento do QRCode", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.label = tk.Label(self, text="Realize o pagamento", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
         self.label.pack(pady=10)
 
-        self.imagem = tk.PhotoImage(file="qrcode.png") 
-        self.imagem_label = tk.Label(self, image=self.imagem, bg=self.parent.master.cor_fundo)
-        self.imagem_label.pack(pady=10)
+        if os.path.exists("base64.png"):        
+            self.imagem = tk.PhotoImage(file="base64.png") 
+            self.imagem_label = tk.Label(self, image=self.imagem, bg=self.parent.master.cor_fundo)
+            self.imagem_label.pack(pady=10)
+        elif os.path.exists("chave_pix.txt"):
+            with open('chave_pix.txt', 'r') as arquivo:
+                conteudo = arquivo.read()
+            self.key_text = tk.Text(self, height=3, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+            self.key_text.insert("1.0", conteudo)   # Insere o conteúdo do arquivo no Text
+            self.key_text.config(state="disabled")  # Desativa a edição do Text
+            self.key_text.pack(pady=10)
+        else:
+            self.label.config(text="Consultando status", font=('Helvetica', 18))
 
         self.spinner = ttk.Progressbar(self, mode='indeterminate', )
         self.spinner.pack(pady=10)
         self.spinner.start()
 
-        self.status_label = tk.Label(self, text="Aguardando pagamento...", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.status_label = tk.Label(self, text="Aguardando processamento", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
         self.status_label.pack(pady=10)
 
         self.button_frame = tk.Frame(self, bg=self.parent.master.cor_fundo)
