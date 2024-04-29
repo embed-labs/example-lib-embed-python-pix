@@ -127,8 +127,8 @@ class TelaQrcode(tk.Frame):
         self.voltar_button.pack(pady=10)
 
     def processar(self):
-        valor = self.textbox.get()
-        print("Valor do Pix:", valor)
+        valor = self.textbox.get('1.0', 'end-1c') # deletes the last character (\n)
+        print(f"Valor do Pix: <{valor}>")
 
         result = api.base_64(valor)
         if result == "1":
@@ -158,8 +158,8 @@ class TelaChavePix(tk.Frame):
         self.voltar_button.pack(pady=10)
 
     def processar(self):
-        valor = self.textbox.get()
-        print("Valor do Pix:", valor)
+        valor = self.textbox.get('1.0', 'end-1c') # deletes the last character (\n)
+        print(f"Valor do Pix: <{valor}>")
 
         result = api.chave_pix(valor)
         if result == "1":
@@ -175,9 +175,13 @@ class TelaReembolso(tk.Frame):
 
         self.label = tk.Label(self, text="Digite o TID:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
         self.label.pack()
-
         self.tid_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
         self.tid_text.pack(pady=10)
+
+        self.val_label = tk.Label(self, text="Digite o Valor:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
+        self.val_label.pack()
+        self.val_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.val_text.pack(pady=10)
 
         self.button_frame = tk.Frame(self, bg=self.parent.master.cor_fundo)
         self.button_frame.pack(padx=30)
@@ -189,10 +193,15 @@ class TelaReembolso(tk.Frame):
         self.voltar_button.pack(pady=10)
 
     def processar(self):
-        tid = self.tid_text.get("1.0", tk.END)
-        print("Tid:", tid)
+        tid = self.tid_text.get("1.0", "end-1c")
+        val = self.val_text.get("1.0", "end-1c")
+        print(f"Tid: <{tid}>")
+        print(f"Val: <{val}>")
 
-        result = api.reembolso(tid)
+        tid = tid if tid != "" else None
+        val = val if val != "" else None
+
+        result = api.reembolso(tid, val)
         if result == "0":
             self.label.config(text="Reembolso confirmado!", font=('Helvetica', 26))
         else:
