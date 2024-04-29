@@ -82,7 +82,7 @@ flowchart TD;
 ```mermaid
 flowchart TD;
     base1(embed_iniciar\ninput = pix) -- result.status_code ==  0 --> base2(embed_processar\ninput = get_reembolso;tid);
-    base2 -- result.status_code == 0 --> base3(embed_finalizar\ninput = N\A);
+    base2 -- result.status_code == 0 --> base3(embed_finalizar\ninput = N/A);
 ```
 _Obs: ao informar o TID será reembolsada uma transação especifica; se não será a ultima realizada_
 
@@ -222,8 +222,8 @@ Estas modalidades podem ser parametrizadas de duas formas:
 // Get Qrcode (base64)
 {
     "processar": {
-        "operacao": "get_base64",       // obtém o qrcode base64 
-        "valor": "",                    // em centavos (se R$ 1,00 logo 100)
+        "operacao": "get_base64",            // obtém o qrcode base64 
+        "valor": "",                        // em centavos (se R$ 1,00 logo 100)
     }
 }
 // Get Chave Pix (chave_pix)
@@ -237,14 +237,14 @@ Estas modalidades podem ser parametrizadas de duas formas:
 {
     "processar": {
         "operacao": "get_status",
-        "tid": "",                  // opcional, para pegar o status de uma transação específica
+        "tid": "",                          // opcional, para pegar o status de uma transação específica
     }
 }
 // Get Reembolso
 {
     "processar": {
         "operacao": "get_reembolso",
-        "tid": "",                  // opcional, para fazer o reembolso de uma transação específica
+        "tid": "",                          // opcional, para fazer o reembolso de uma transação específica
     }
 }
 ```
