@@ -63,15 +63,15 @@ def chave_pix(valor):
     result = lib.obter_valor(output, STATUS_CODE)
     return result
 
-def reembolso(tid=None):
+def reembolso(tid=None, valor=None):
     OPERACAO = 'get_reembolso'  # operação para realizar reembolso pix
-    TID = tid                   # tid (identificador) da transação - opcional
 
-    # verifica o tid pois é opcional
-    if tid == None:
-        input = OPERACAO
+    # realiza o reembolso de uma transação específica (tid e valor) ou realiza
+    # o reembolso da última transação
+    if tid != None and valor != None:
+        input = f"{OPERACAO};{valor};{tid}"
     else:
-        input = f"{OPERACAO};{TID}"
+        input = OPERACAO
     
     output = lib.processar(input)
     print(f"processar = {output}")
@@ -87,7 +87,7 @@ def status(tid=None):
     if tid == None:
         input = OPERACAO
     else:
-        input = f"{OPERACAO};;{TID}"
+        input = f"{OPERACAO};{TID}"
 
     output = lib.processar(input)
     print(f"processar = {output}")
@@ -97,8 +97,8 @@ def status(tid=None):
 
 def finalizar():
     # apaga os arquivos auxiliares para a demo
-    if os.path.exists("qrcode.png"):
-        os.remove("qrcode.png")    
+    if os.path.exists("base64.png"):
+        os.remove("base64.png")    
     if os.path.exists("chave_pix.txt"):
         os.remove("chave_pix.txt")
 
