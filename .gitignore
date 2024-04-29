@@ -3,3 +3,4 @@ __pycache__
 logs
 .env
 qrcode.png
+base64.png
