@@ -119,7 +119,7 @@ Pode ser parametrizado de duas maneiras:
 ```javascript
 {
     "configs": {
-        "produto": "piz",                                        
+        "produto": "pix",                                        
         "sub_produto": "1",                                       
         "infos": {
             "timeout": "300",
@@ -137,7 +137,7 @@ Pode ser parametrizado de duas maneiras:
 ```
 2. Metaparâmetro (obedecendo a sequência)
 ```c
-"piz;1;300;api_key;prod_id;pid;nome;email;telefone;documento;conta"
+"pix;1;300;api_key;prod_id;pid;nome;email;telefone;documento;conta"
 ```
 
 ###### 1.2.2. Output
