@@ -130,7 +130,7 @@ class TelaQrcode(tk.Frame):
         valor = self.textbox.get('1.0', 'end-1c') # deletes the last character (\n)
         print(f"Valor do Pix: <{valor}>")
 
-        result = api.base_64(valor)
+        result = api.pagamento(valor)
         if result == "1":
             self.parent.master.mostrar_frame("TelaProcessamento")
 
@@ -161,7 +161,7 @@ class TelaChavePix(tk.Frame):
         valor = self.textbox.get('1.0', 'end-1c') # deletes the last character (\n)
         print(f"Valor do Pix: <{valor}>")
 
-        result = api.chave_pix(valor)
+        result = api.pagamento(valor)
         if result == "1":
             self.parent.master.mostrar_frame("TelaProcessamento")
 
@@ -178,6 +178,11 @@ class TelaReembolso(tk.Frame):
         self.tid_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
         self.tid_text.pack(pady=10)
 
+        self.e2id_label = tk.Label(self, text="Digite o E2ID:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
+        self.e2id_label.pack()
+        self.e2id_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
+        self.e2id_text.pack(pady=10)
+        
         self.val_label = tk.Label(self, text="Digite o Valor:", bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 26))
         self.val_label.pack()
         self.val_text = tk.Text(self, height=1, bg=self.parent.master.cor_fundo, fg=self.parent.master.cor_texto, font=('Helvetica', 18))
@@ -195,13 +200,16 @@ class TelaReembolso(tk.Frame):
     def processar(self):
         tid = self.tid_text.get("1.0", "end-1c")
         val = self.val_text.get("1.0", "end-1c")
+        e2id = self.e2id_text.get("1.0", "end-1c")
         print(f"Tid: <{tid}>")
         print(f"Val: <{val}>")
+        print(f"E2id: <{e2id}>")
 
         tid = tid if tid != "" else None
         val = val if val != "" else None
+        e2id = e2id if e2id != "" else None
 
-        result = api.reembolso(tid, val)
+        result = api.reembolso(tid, e2id, val)
         if result == "0":
             self.label.config(text="Reembolso confirmado!", font=('Helvetica', 26))
         else:
@@ -299,7 +307,6 @@ class TelaProcessamento(tk.Frame):
                 break
                 
         self.parent.master.mostrar_frame("TelaPrincipal")
-
 
     def cancelar(self):
         api.finalizar()
